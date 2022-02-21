@@ -1,11 +1,11 @@
-package com.example.phonebooktestapp.overui
+package com.example.phonebooktestapp.ui.home
 
 import android.app.Application
 import android.content.ContentValues
 import android.util.Log
 import androidx.lifecycle.*
-import com.example.phonebooktestapp.database.Contact
-import com.example.phonebooktestapp.database.ContactDatabase.Companion.getInstance
+import com.example.phonebooktestapp.storage.Contact
+import com.example.phonebooktestapp.storage.ContactDatabase.Companion.getInstance
 import kotlinx.coroutines.launch
 
 class ContactViewModel(application: Application) : AndroidViewModel(application) {
@@ -31,11 +31,11 @@ class ContactViewModel(application: Application) : AndroidViewModel(application)
         get() = _opendrawermenu
 
     init {
-        getContactlist()
+        loadAllContacts()
     }
 
     //получение списка контактов из базы данных
-    private fun getContactlist() {
+    private fun loadAllContacts() {
         viewModelScope.launch {
             try {
                 _listContact.value = database.contactDatabaseDao.getContacts()
@@ -48,11 +48,11 @@ class ContactViewModel(application: Application) : AndroidViewModel(application)
 
     //обновление списка контактов
     fun updateContactList() {
-        getContactlist()
+        loadAllContacts()
     }
 
     //поиск контактов по имены
-    fun getSearhContactlist(searchQuery: String) {
+    fun searhContactlist(searchQuery: String) {
         val searchQueryFormat = "%$searchQuery%"
         viewModelScope.launch {
             try {
@@ -66,11 +66,11 @@ class ContactViewModel(application: Application) : AndroidViewModel(application)
     }
 
     //поиск контактов по категориии
-    fun getFilterContactlist(searchQuery: String) {
+    fun filterContactlist(searchQuery: String) {
         val searchQueryFormat = "%$searchQuery%"
         when (searchQuery) {
             "Все контакты" -> {
-                getContactlist()
+                loadAllContacts()
             }
             "О программе" -> {
 

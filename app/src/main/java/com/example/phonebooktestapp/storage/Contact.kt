@@ -1,4 +1,4 @@
-package com.example.phonebooktestapp.database
+package com.example.phonebooktestapp.storage
 
 import android.os.Parcelable
 import android.widget.ImageView

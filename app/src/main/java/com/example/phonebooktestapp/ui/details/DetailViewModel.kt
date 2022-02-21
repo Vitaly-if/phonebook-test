@@ -1,4 +1,4 @@
-package com.example.phonebooktestapp.detailui
+package com.example.phonebooktestapp.ui.details
 
 import android.app.Application
 import android.content.ContentValues
@@ -8,8 +8,8 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.phonebooktestapp.database.Contact
-import com.example.phonebooktestapp.database.ContactDatabase
+import com.example.phonebooktestapp.storage.Contact
+import com.example.phonebooktestapp.storage.ContactDatabase
 import kotlinx.coroutines.launch
 
 class DetailViewModel(contact: Contact?, app: Application) : AndroidViewModel(app) {

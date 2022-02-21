@@ -1,11 +1,11 @@
-package com.example.phonebooktestapp.overui
+package com.example.phonebooktestapp.ui.home
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.phonebooktestapp.database.Contact
+import com.example.phonebooktestapp.storage.Contact
 import com.example.phonebooktestapp.databinding.ListItemBinding
 import com.bumptech.glide.Glide
 

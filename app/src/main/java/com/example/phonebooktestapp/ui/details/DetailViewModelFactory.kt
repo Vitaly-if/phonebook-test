@@ -1,9 +1,9 @@
-package com.example.phonebooktestapp.detailui
+package com.example.phonebooktestapp.ui.details
 
 import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.phonebooktestapp.database.Contact
+import com.example.phonebooktestapp.storage.Contact
 
 class DetailViewModelFactory(
     private val contact: Contact?,

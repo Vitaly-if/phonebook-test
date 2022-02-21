@@ -1,8 +1,10 @@
-package com.example.phonebooktestapp.detailui
+package com.example.phonebooktestapp.ui.details
 
+import android.R.attr
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
+import android.app.Application
 import android.content.ActivityNotFoundException
 import android.content.ContentValues
 import android.content.Intent
@@ -22,7 +24,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import com.example.phonebooktestapp.R
-import com.example.phonebooktestapp.database.Contact
+import com.example.phonebooktestapp.storage.Contact
 import com.example.phonebooktestapp.databinding.DetailFragmentViewBinding
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -32,10 +34,14 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.karumi.dexter.listener.single.PermissionListener
 import com.bumptech.glide.Glide
+import com.example.phonebooktestapp.managers.PhotoManager
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
+import android.R.attr.data
+import androidx.appcompat.app.AppCompatActivity
+
 
 class DetailFragment : Fragment() {
 
@@ -45,6 +51,8 @@ class DetailFragment : Fragment() {
     private lateinit var currentPhotoPath: String
     private val CAMERA_REQUEST_CODE = 1
     private val GALLERY_REQUEST_CODE = 2
+    private lateinit var binding: DetailFragmentViewBinding
+    private lateinit var application: Application
 
     @SuppressLint("ResourceType")
     override fun onCreateView(
@@ -53,57 +61,51 @@ class DetailFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        //разрешение на установку меню в фрагменте
-        setHasOptionsMenu(true)
+        setupBind(inflater, container)
+        setupUI()
+        bindVM()
 
-        val binding: DetailFragmentViewBinding = DataBindingUtil.inflate(
+        return binding.root
+    }
+
+    private fun setupBind(inflater: LayoutInflater, container: ViewGroup?) {
+
+        binding = DataBindingUtil.inflate(
             inflater,
             R.layout.detail_fragment_view,
             container,
             false
         )
-
         @Suppress("UNUSED_VARIABLE")
-        val application = requireNotNull(activity).application
+        application = requireNotNull(activity).application
 
-        //переменная для хранения имени пакета(нужен для формирования intent, переход в настройки разрешения приложения)
-        val packageName = application.packageName
-
-        binding.lifecycleOwner = this
         val contact = DetailFragmentArgs.fromBundle(requireArguments()).selectedContact
         val viewModelFactory = DetailViewModelFactory(contact, application)
         Log.i(ContentValues.TAG, "DetailFragment=" + contact?.name)
         binding.viewModel = ViewModelProvider(
             this, viewModelFactory
         ).get(DetailViewModel::class.java)
+        binding.lifecycleOwner = this
+    }
 
-        // переход назад
-        viewModel.closeDetilFragment.observe(this, {
-            if (it != null) {
-                val navController = Navigation.findNavController(activity!!, R.id.myNavHostFragment)
-                navController.navigateUp()
-            }
-        })
+    private fun setupUI() {
+        loadImage()
 
+        setHasOptionsMenu(true)
+    }
+
+    private fun loadImage() {
         //загрузка изображения
         binding.imageEdit.setOnClickListener {
-            val pictureDialog = AlertDialog.Builder(context)
-            pictureDialog.setTitle("Select Action")
-            val pictureDialogItem = arrayOf(
-                "Select photo from Gallery",
-                "Capture photo from Camera"
-            )
-            pictureDialog.setItems(pictureDialogItem) { _, which ->
 
-                when (which) {
-                    0 -> galleryCheckPermission(packageName)
-                    1 -> cameraCheckPermission()
-                }
-            }
-            pictureDialog.show()
+           val PhotoManager = PhotoManager(application, activity, context)
+            Log.i(ContentValues.TAG, "Проверка логов actyvity fr $activity")
+            PhotoManager.showDialog()
 
         }
+    }
 
+    private fun bindVM() {
         // наблюдатель за изменением картинки
         viewModel.avatarImgString.observe(this, {
             val tempuri = Uri.parse(it)
@@ -113,7 +115,6 @@ class DetailFragment : Fragment() {
                 .circleCrop()
                 .into(binding.imageView)
         })
-
         // первоначальное заполнение radioButton
         val radioButton = binding.radioButtonGroup.getChildAt(viewModel.selectContactGroupRB)
         binding.radioButtonGroup.check(radioButton.id)
@@ -144,8 +145,13 @@ class DetailFragment : Fragment() {
                 viewModel.saveContactComplete()
             }
         })
-
-        return binding.root
+        // переход назад
+        viewModel.closeDetilFragment.observe(this, {
+            if (it != null) {
+                val navController = Navigation.findNavController(activity!!, R.id.myNavHostFragment)
+                navController.navigateUp()
+            }
+        })
     }
 
     //создание файла для картинки(после фото)
@@ -209,20 +215,11 @@ class DetailFragment : Fragment() {
 
     //получение картинки от системы, с фото или с галереи
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        Log.i(ContentValues.TAG, "Проверка логов avatarimg 44")
         super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK) {
-            when (requestCode) {
-                CAMERA_REQUEST_CODE -> {
-
-                    //обновим переменную для отображения картинки
-                    viewModel.updateImage()
-                }
-                GALLERY_REQUEST_CODE -> {
-                    //добавим картинку
-                    viewModel.addImage(data?.data)
-                }
-            }
-        }
+        if ((requestCode ==1) or (requestCode==2))
+        Log.i(ContentValues.TAG, "Проверка логов avatarimg 4")
+        this.onActivityResult(requestCode, resultCode, data)
     }
 
     //проверка разрешения на использование галереи
@@ -324,6 +321,8 @@ class DetailFragment : Fragment() {
             else -> super.onOptionsItemSelected(item)
         }
     }
+
+
 }
 
 

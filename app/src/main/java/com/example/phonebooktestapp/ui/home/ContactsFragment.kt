@@ -1,4 +1,4 @@
-package com.example.phonebooktestapp.overui
+package com.example.phonebooktestapp.ui.home
 
 import android.content.ContentValues
 import android.os.Bundle
@@ -14,11 +14,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.phonebooktestapp.R
-import com.example.phonebooktestapp.database.ContactDatabase
 import com.example.phonebooktestapp.databinding.FragmentContactsListBinding
 
-class FragmentContacts : Fragment() {
+class ContactsFragment : Fragment() {
 
+    private lateinit var binding: FragmentContactsListBinding
     private val viewModel: ContactViewModel by lazy {
         ViewModelProvider(this).get(ContactViewModel::class.java)
     }
@@ -28,10 +28,18 @@ class FragmentContacts : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
-        //разрешение на установку меню в фрагменте
-        setHasOptionsMenu(true)
 
-        val binding: FragmentContactsListBinding = DataBindingUtil.inflate(
+        setupBind(inflater,container)
+
+        setupUI()
+
+        bindVM()
+
+        return binding.root
+    }
+
+    private fun setupBind(inflater: LayoutInflater, container: ViewGroup?) {
+        binding = DataBindingUtil.inflate(
             inflater,
             R.layout.fragment_contacts_list,
             container,
@@ -41,7 +49,14 @@ class FragmentContacts : Fragment() {
         binding.lifecycleOwner = this
         //Предоставление привязки доступа к ContactViewModel
         binding.viewModel = viewModel
+    }
+    private fun setupUI() {
+        setupCategoryList()
+        setupAddContactBottom()
+        setHasOptionsMenu(true)
+    }
 
+    private fun setupCategoryList() {
         //заполнение listview  бокового меню
         val listCategory =
             arrayOf("Все контакты", "Друзья", "Коллеги", "Знакомые", "Сокурсники", "О программе")
@@ -55,14 +70,17 @@ class FragmentContacts : Fragment() {
         }
         var categoryListView = binding.categoryListView
         categoryListView.adapter = adapter
+    }
 
+    private fun setupAddContactBottom() {
         //переход в пустой фрагмент создание нового контакта
         binding.addContactButton.setOnClickListener {
             this.findNavController().navigate(
-                FragmentContactsDirections.actionFragmentContactsToDetailFragment(null)
+                ContactsFragmentDirections.actionContactsFragmentToDetailFragment(null)
             )
         }
-
+    }
+    private fun bindVM() {
         //Наблюдатель открытия бокового меню
         viewModel.opendrawermenu.observe(
             this,
@@ -70,7 +88,7 @@ class FragmentContacts : Fragment() {
                 if (it) {
                     val draverLayout = view?.findViewById<DrawerLayout>(R.id.drawer_layout)!!
                     draverLayout.openDrawer(GravityCompat.START)
-                    categoryListView = view?.findViewById<ListView>(R.id.category_list_view)!!
+                    val categoryListView = view?.findViewById<ListView>(R.id.category_list_view)!!
                     //слушатель нажатий на элемент бокового меню
                     categoryListView.onItemClickListener =
                         object : AdapterView.OnItemClickListener {
@@ -82,7 +100,7 @@ class FragmentContacts : Fragment() {
                             ) {
                                 val itemValue =
                                     categoryListView.getItemAtPosition(position) as String
-                                viewModel.getFilterContactlist(itemValue)
+                                viewModel.filterContactlist(itemValue)
                                 draverLayout.closeDrawer(GravityCompat.START)
                                 viewModel.openDrawerComplete()
                             }
@@ -95,7 +113,7 @@ class FragmentContacts : Fragment() {
         viewModel.navigateToSelectedContact.observe(this, Observer {
             if (null != it) {
                 this.findNavController().navigate(
-                    FragmentContactsDirections.actionFragmentContactsToDetailFragment(it)
+                    ContactsFragmentDirections.actionContactsFragmentToDetailFragment(it)
 
                 )
                 viewModel.displayDetailsComplete()
@@ -110,10 +128,7 @@ class FragmentContacts : Fragment() {
             ContactLinearAdapter(ContactLinearAdapter.ContactListener {
                 viewModel.displayContactDetails(it)
             })
-
-        return binding.root
     }
-
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_search, menu)
         super.onCreateOptionsMenu(menu, inflater)
@@ -130,13 +145,13 @@ class FragmentContacts : Fragment() {
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 if (query != null)
-                    viewModel.getSearhContactlist(query)
+                    viewModel.searhContactlist(query)
                 return false
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
                 if (newText != null)
-                    viewModel.getSearhContactlist(newText)
+                    viewModel.searhContactlist(newText)
                 return false
             }
         })

@@ -7,10 +7,10 @@
     <data>
         <variable
             name="contact"
-            type="com.example.phonebooktestapp.database.Contact" />
+            type="com.example.phonebooktestapp.storage.Contact" />
     <variable
         name="clickListener"
-        type="com.example.phonebooktestapp.overui.ContactLinearAdapter.ContactListener" />
+        type="com.example.phonebooktestapp.ui.home.ContactLinearAdapter.ContactListener" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

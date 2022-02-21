@@ -3,27 +3,27 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/navigation"
-    app:startDestination="@id/fragmentContacts">
+    app:startDestination="@id/contactsFragment">
 
     <fragment
-        android:id="@+id/fragmentContacts"
-        android:name="com.example.phonebooktestapp.overui.FragmentContacts"
-        android:label="" >
+        android:id="@+id/contactsFragment"
+        android:name="com.example.phonebooktestapp.ui.home.ContactsFragment"
+        android:label="">
         <action
-            android:id="@+id/action_fragmentContacts_to_detailFragment"
+            android:id="@+id/action_contactsFragment_to_detailFragment"
             app:destination="@id/detailFragment" />
     </fragment>
     <fragment
         android:id="@+id/detailFragment"
-        android:name="com.example.phonebooktestapp.detailui.DetailFragment"
-        android:label="DetailFragment" >
+        android:name="com.example.phonebooktestapp.ui.details.DetailFragment"
+        android:label="DetailFragment">
         <argument
             android:name="selectedContact"
-            app:argType="com.example.phonebooktestapp.database.Contact"
-            app:nullable="true"
-            android:defaultValue="@null"/>
+            android:defaultValue="@null"
+            app:argType="com.example.phonebooktestapp.storage.Contact"
+            app:nullable="true" />
         <action
-            android:id="@+id/action_detailFragment_to_fragmentContacts"
-            app:destination="@id/fragmentContacts" />
+            android:id="@+id/action_detailFragment_to_contactsFragment"
+            app:destination="@id/contactsFragment" />
     </fragment>
 </navigation>

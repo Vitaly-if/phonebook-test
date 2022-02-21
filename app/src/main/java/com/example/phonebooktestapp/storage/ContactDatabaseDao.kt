@@ -1,4 +1,4 @@
-package com.example.phonebooktestapp.database
+package com.example.phonebooktestapp.storage
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
