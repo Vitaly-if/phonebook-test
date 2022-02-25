@@ -6,8 +6,8 @@
     android:id="@+id/layout">
     <data>
         <variable
-            name="contact"
-            type="com.example.phonebooktestapp.storage.Contact" />
+            name="contactsTable"
+            type="com.example.phonebooktestapp.storage.ContactsTable" />
     <variable
         name="clickListener"
         type="com.example.phonebooktestapp.ui.home.ContactLinearAdapter.ContactListener" />
@@ -17,7 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="5dp"
-        android:onClick="@{() -> clickListener.onClick(contact)}">
+        android:onClick="@{() -> clickListener.onClick(contactsTable)}">
 
         <ImageView
             android:id="@+id/contact_image"

@@ -6,10 +6,10 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 
 
-@Database(entities = [Contact::class], version = 2, exportSchema = false)
+@Database(entities = [ContactsTable::class], version = 2, exportSchema = false)
 abstract class ContactDatabase: RoomDatabase() {
 
-    abstract val contactDatabaseDao: ContactDatabaseDao
+    abstract val contactsDao: ContactsDao
 
     companion object{
 

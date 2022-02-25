@@ -1,24 +1,25 @@
 package com.example.phonebooktestapp.ui.details
 
 import android.app.Application
-import android.content.ContentValues
 import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.phonebooktestapp.storage.Contact
+import com.example.phonebooktestapp.storage.ContactsTable
 import com.example.phonebooktestapp.storage.ContactDatabase
+import com.example.phonebooktestapp.storage.StorageManager
 import kotlinx.coroutines.launch
 
-class DetailViewModel(contact: Contact?, app: Application) : AndroidViewModel(app) {
+class DetailViewModel(contactsTable: ContactsTable?, app: Application) : AndroidViewModel(app) {
 
     private val database = ContactDatabase.getInstance(app)
 
+    private val storageManager = StorageManager(database.contactsDao)
+
     //live data для выбранного контакта
-    private val _selectedContact = MutableLiveData<Contact?>()
-    val selectedContact: MutableLiveData<Contact?>
+    private val _selectedContact = MutableLiveData<ContactsTable?>()
+    val selectedContactsTable: MutableLiveData<ContactsTable?>
         get() = _selectedContact
 
     //live data для сохранения контакта
@@ -46,11 +47,11 @@ class DetailViewModel(contact: Contact?, app: Application) : AndroidViewModel(ap
 
     init {
         //проверка, если приходит null создается пустой контакт
-        if (contact == null)
-            _selectedContact.value = Contact(0L, "", "")
+        if (contactsTable == null)
+            _selectedContact.value = ContactsTable(0L, "", "")
         else {
-            _selectedContact.value = contact
-            _avatarImgString.value = contact.contactAvatarImg
+            _selectedContact.value = contactsTable
+            _avatarImgString.value = contactsTable.contactAvatarImg
             newContact = false
         }
         selectContactGroupRB = getGroupContact(_selectedContact)
@@ -58,9 +59,9 @@ class DetailViewModel(contact: Contact?, app: Application) : AndroidViewModel(ap
     }
 
     //выбор категории для RadioButton
-    private fun getGroupContact(_selectedContact: MutableLiveData<Contact?>): Int {
+    private fun getGroupContact(_selectedContactsTable: MutableLiveData<ContactsTable?>): Int {
         var selectCategory = 0
-        selectCategory = when (_selectedContact.value?.category) {
+        selectCategory = when (_selectedContactsTable.value?.category) {
 
             "Друзья" -> 1
             "Коллеги" -> 2
@@ -72,17 +73,17 @@ class DetailViewModel(contact: Contact?, app: Application) : AndroidViewModel(ap
         return selectCategory
     }
     //добавление контакта в базу данных
-    fun insertContact(contact: Contact) {
+    fun insertContact(contactsTable: ContactsTable) {
         viewModelScope.launch {
-            database.contactDatabaseDao.insert(contact)
+            storageManager.insert(contactsTable)
             _closeDetilFragment.value = true
         }
     }
 
     //обновление контакта в базе данных
-    fun updateContact(contact: Contact) {
+    fun updateContact(contactsTable: ContactsTable) {
         viewModelScope.launch {
-            database.contactDatabaseDao.update(contact)
+            storageManager.update(contactsTable)
             _closeDetilFragment.value = true
         }
     }
@@ -91,7 +92,7 @@ class DetailViewModel(contact: Contact?, app: Application) : AndroidViewModel(ap
         if (!newContact) {
             viewModelScope.launch {
                 _selectedContact.value?.let {
-                    database.contactDatabaseDao.delete(it)
+                    storageManager.delete(it)
                     _closeDetilFragment.value = true
                 }
             }
@@ -104,18 +105,13 @@ class DetailViewModel(contact: Contact?, app: Application) : AndroidViewModel(ap
     //сохранение контакта завершение
     fun saveContactComplete() {
         _saveContact.value = false
+
         _closeDetilFragment.value = true
     }
 
     //добавление аватара
     fun addImage(uri: Uri?) {
         _avatarImgString.value = uri?.toString()
-    }
-    //обновление аватара
-    fun updateImage() {
-        Log.i(ContentValues.TAG, "Проверка логов avatarimg = ${_avatarImgString.value}")
-        _avatarImgString.value = _avatarImgString.value
-
     }
 
 }

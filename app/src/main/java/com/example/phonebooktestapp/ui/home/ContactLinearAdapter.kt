@@ -5,14 +5,14 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.phonebooktestapp.storage.Contact
-import com.example.phonebooktestapp.databinding.ListItemBinding
+import com.example.phonebooktestapp.storage.ContactsTable
+import com.example.phonebooktestapp.databinding.ContactListItemBinding
 import com.bumptech.glide.Glide
 
 //класс реализует адаптер RecyclerView ListAdapter, который использует привязку данных для представления List, данные включаю различия между списками
 //в параметре принимается лямбда слушателя нажатия
 class ContactLinearAdapter(val clickListener: ContactListener) :
-    ListAdapter<Contact, ContactLinearAdapter.ViewHolder>(ContactDiffCallback()) {
+    ListAdapter<ContactsTable, ContactLinearAdapter.ViewHolder>(ContactDiffCallback()) {
 
     //создание новых представлений элементов RecyclerView (вызывается менеджером компоновки)
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -20,11 +20,11 @@ class ContactLinearAdapter(val clickListener: ContactListener) :
     }
 
     //конструктор ViewHolder берет переменную привязки из ListItemBinding, который обеспечивает доступ к информации
-    class ViewHolder private constructor(val binding: ListItemBinding) :
+    class ViewHolder private constructor(val binding: ContactListItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(clickListener: ContactListener, item: Contact) {
-            binding.contact = item
+        fun bind(clickListener: ContactListener, item: ContactsTable) {
+            binding.contactsTable = item
             binding.chapterName.text = item.name
             Glide.with(itemView.context)
                 .load(item.contactAvatarImg) // Uri of the picture
@@ -41,31 +41,31 @@ class ContactLinearAdapter(val clickListener: ContactListener) :
         companion object {
             fun from(parent: ViewGroup): ViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
-                val binding = ListItemBinding.inflate(layoutInflater, parent, false)
+                val binding = ContactListItemBinding.inflate(layoutInflater, parent, false)
                 return ViewHolder(binding)
             }
         }
     }
 
-    //кастомный слушатель обрабатывает клики по элементам RecyclerView, проходит Contact связанный с текущим элементом в
-    //функцию onClick, clickListener лямбда которая будет вызываться с текущим Contact
-    class ContactListener(val clickListener: (contact: Contact) -> Unit) {
-        fun onClick(contact: Contact) = clickListener(contact)
+    //кастомный слушатель обрабатывает клики по элементам RecyclerView, проходит ContactsTable связанный с текущим элементом в
+    //функцию onClick, clickListener лямбда которая будет вызываться с текущим ContactsTable
+    class ContactListener(val clickListener: (contactsTable: ContactsTable) -> Unit) {
+        fun onClick(contactsTable: ContactsTable) = clickListener(contactsTable)
     }
 
     //Заменяет содержимое представления (вызывается менеджером компоновки)
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val contact = getItem(position) as Contact
+        val contact = getItem(position) as ContactsTable
         holder.bind(clickListener, contact)
     }
 }
 //позволяет RecyclerView определять, какие элементы были изменены, когда список был обновлен
-class ContactDiffCallback : DiffUtil.ItemCallback<Contact>() {
-    override fun areItemsTheSame(oldItem: Contact, newItem: Contact): Boolean {
+class ContactDiffCallback : DiffUtil.ItemCallback<ContactsTable>() {
+    override fun areItemsTheSame(oldItem: ContactsTable, newItem: ContactsTable): Boolean {
         return oldItem.contactId == newItem.contactId
     }
 
-    override fun areContentsTheSame(oldItem: Contact, newItem: Contact): Boolean {
+    override fun areContentsTheSame(oldItem: ContactsTable, newItem: ContactsTable): Boolean {
         return oldItem == newItem
     }
 }

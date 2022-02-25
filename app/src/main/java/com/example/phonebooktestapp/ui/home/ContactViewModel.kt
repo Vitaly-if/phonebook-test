@@ -4,25 +4,28 @@ import android.app.Application
 import android.content.ContentValues
 import android.util.Log
 import androidx.lifecycle.*
-import com.example.phonebooktestapp.storage.Contact
+import com.example.phonebooktestapp.storage.ContactsTable
 import com.example.phonebooktestapp.storage.ContactDatabase.Companion.getInstance
+import com.example.phonebooktestapp.storage.StorageManager
 import kotlinx.coroutines.launch
 
 class ContactViewModel(application: Application) : AndroidViewModel(application) {
 
     private val database = getInstance(application)
 
-    //live data для загрузки с базы данных
-    private val _listContact = MutableLiveData<List<Contact>>()
+    private val storageManager = StorageManager(database.contactsDao)
 
-    val listContact: LiveData<List<Contact>>
+    //live data для загрузки с базы данных
+    private val _listContact = MutableLiveData<List<ContactsTable>>()
+
+    val listContactsTable: LiveData<List<ContactsTable>>
         get() = _listContact
 
     //live data для передачи в detailfragment
-    private val _navigateToContact = MutableLiveData<Contact?>()
+    private val _navigateToContact = MutableLiveData<ContactsTable?>()
 
     //live data для статуса перехода в deteilfragment
-    val navigateToSelectedContact: MutableLiveData<Contact?>
+    val navigateToSelectedContactsTable: MutableLiveData<ContactsTable?>
         get() = _navigateToContact
 
     //live data для открытия и заполнения drawermenu
@@ -32,13 +35,14 @@ class ContactViewModel(application: Application) : AndroidViewModel(application)
 
     init {
         loadAllContacts()
+        _opendrawermenu.value = false
     }
 
     //получение списка контактов из базы данных
     private fun loadAllContacts() {
         viewModelScope.launch {
             try {
-                _listContact.value = database.contactDatabaseDao.getContacts()
+                _listContact.value = storageManager.getContacts()
 
             } catch (e: Exception) {
 
@@ -56,7 +60,7 @@ class ContactViewModel(application: Application) : AndroidViewModel(application)
         val searchQueryFormat = "%$searchQuery%"
         viewModelScope.launch {
             try {
-                _listContact.value = database.contactDatabaseDao.searchDataBase(searchQueryFormat)
+                _listContact.value = storageManager.searchDataBase(searchQueryFormat)
                 Log.i(ContentValues.TAG, "Searchdatabase[0].name=" + _listContact.value!![0].name)
 
             } catch (e: Exception) {
@@ -79,7 +83,7 @@ class ContactViewModel(application: Application) : AndroidViewModel(application)
                 viewModelScope.launch {
                     try {
                         _listContact.value =
-                            database.contactDatabaseDao.searchDataBaseForCategory(searchQueryFormat)
+                            storageManager.searchDataBaseForCategory(searchQueryFormat)
                     } catch (e: Exception) {
 
                     }
@@ -89,8 +93,8 @@ class ContactViewModel(application: Application) : AndroidViewModel(application)
     }
 
     //функция получает в параметре выбранный контакт и изменяет LiveData, далее происходит переход по навигации
-    fun displayContactDetails(contact: Contact) {
-        _navigateToContact.value = contact
+    fun displayContactDetails(contactsTable: ContactsTable) {
+        _navigateToContact.value = contactsTable
     }
 
     fun displayDetailsComplete() {

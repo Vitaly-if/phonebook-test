@@ -51,7 +51,7 @@
             android:ems="10"
             android:hint="@string/hint_name"
             android:inputType="textPersonName"
-            android:text="@{String.valueOf(viewModel.selectedContact.name)}"
+            android:text="@{String.valueOf(viewModel.selectedContactsTable.name)}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.706"
@@ -65,7 +65,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/normal_100"
             android:hint="@string/hint_phone"
-            android:text="@{String.valueOf(viewModel.selectedContact.phone)}"
+            android:text="@{String.valueOf(viewModel.selectedContactsTable.phone)}"
             app:layout_constraintEnd_toEndOf="@+id/editTextName"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/editTextName"
@@ -89,37 +89,6 @@
                 android:id="@+id/radioButtonGroup"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
-
-                <RadioButton
-                    android:id="@+id/all_contacts_radioButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Все контакты" />
-
-                <RadioButton
-                    android:id="@+id/friends_radioButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Друзья" />
-
-                <RadioButton
-                    android:id="@+id/colleagues_radioButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Коллеги" />
-
-                <RadioButton
-                    android:id="@+id/familiar_radioButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Знакомые" />
-
-                <RadioButton
-                    android:id="@+id/students_radioButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Сокурсники" />
-
             </RadioGroup>
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton

@@ -80,6 +80,7 @@ class ContactsFragment : Fragment() {
             )
         }
     }
+
     private fun bindVM() {
         //Наблюдатель открытия бокового меню
         viewModel.opendrawermenu.observe(
@@ -110,7 +111,7 @@ class ContactsFragment : Fragment() {
         )
         //наблюдатель для навигации выбранного контакта, если не равен 0
         //после вызывается displayDetailsComplete() для того чтобы ViewModel была готова для другого навигационного события
-        viewModel.navigateToSelectedContact.observe(this, Observer {
+        viewModel.navigateToSelectedContactsTable.observe(this, Observer {
             if (null != it) {
                 this.findNavController().navigate(
                     ContactsFragmentDirections.actionContactsFragmentToDetailFragment(it)
@@ -129,6 +130,7 @@ class ContactsFragment : Fragment() {
                 viewModel.displayContactDetails(it)
             })
     }
+
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_search, menu)
         super.onCreateOptionsMenu(menu, inflater)
@@ -137,9 +139,6 @@ class ContactsFragment : Fragment() {
 
         val item = menu.findItem(R.id.action_search)
         val searchView = item?.actionView as SearchView
-
-        //добавить стрелочку рядом с крестиком
-        //searchView.isSubmitButtonEnabled = true
 
         //поиск контакта
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {

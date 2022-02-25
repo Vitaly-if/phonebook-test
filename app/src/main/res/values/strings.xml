@@ -10,4 +10,13 @@
     <string name="hint_name">Name</string>
     <string name="hint_phone">Phone</string>
     <string name="contact_delete">contact_delete</string>
+
+    <string-array name="category">
+        <item>Все контакты</item>
+        <item>Друзья</item>
+        <item>Коллеги</item>
+        <item>Знакомые</item>
+        <item>Сокурсники</item>
+        <item>О программе</item>
+    </string-array>
 </resources>

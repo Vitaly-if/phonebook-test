@@ -1,7 +1,6 @@
 package com.example.phonebooktestapp.storage
 
 import android.os.Parcelable
-import android.widget.ImageView
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -9,7 +8,7 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 @Entity(tableName = "contact_table")
-data class Contact(
+data class ContactsTable(
     @PrimaryKey(autoGenerate = true)
     var contactId: Long = 0L,
 

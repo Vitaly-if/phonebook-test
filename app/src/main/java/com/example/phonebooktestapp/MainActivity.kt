@@ -1,10 +1,8 @@
 package com.example.phonebooktestapp
 
-import android.content.ContentValues
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.NavDestination
 import androidx.navigation.findNavController
@@ -12,6 +10,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.example.phonebooktestapp.databinding.ActivityMainBinding
+import com.example.phonebooktestapp.managers.PhotoManager
 
 
 class MainActivity : AppCompatActivity() {
@@ -53,12 +52,12 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-       return super.onActivityResult(requestCode, resultCode, data)
-
+      super.onActivityResult(requestCode, resultCode, data)
+        PhotoManager.getInstance(baseContext)
+        PhotoManager.onActivityResult(requestCode, resultCode, data)
         }
 
     override fun onSupportNavigateUp(): Boolean {
