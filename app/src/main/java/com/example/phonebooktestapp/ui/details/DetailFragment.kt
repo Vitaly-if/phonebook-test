@@ -1,12 +1,16 @@
 package com.example.phonebooktestapp.ui.details
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.Application
 import android.content.ContentValues
+import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import android.widget.RadioButton
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -17,11 +21,6 @@ import com.example.phonebooktestapp.storage.ContactsTable
 import com.bumptech.glide.Glide
 import com.example.phonebooktestapp.databinding.FragmentDetailsBinding
 import com.example.phonebooktestapp.managers.PhotoManager
-import android.widget.RadioGroup
-
-
-
-
 
 
 class DetailFragment : Fragment() {
@@ -44,9 +43,17 @@ class DetailFragment : Fragment() {
         setupUI()
         bindVM()
 
+        binding.constraintView.setOnClickListener{
+            hideKeyboardFrom(context, view)
+            Log.i(ContentValues.TAG,"проверка нажатия")
+        }
         return binding.root
     }
-
+    private fun hideKeyboardFrom(context: Context?, view: View?) {
+        val imm =
+            context?.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view?.windowToken, 0)
+    }
     private fun setupBind(inflater: LayoutInflater, container: ViewGroup?) {
 
         binding = DataBindingUtil.inflate(
@@ -92,7 +99,6 @@ class DetailFragment : Fragment() {
     private fun loadImage() {
         //загрузка изображения
         binding.imageEdit.setOnClickListener {
-
 
             PhotoManager.getInstance(context)
 
