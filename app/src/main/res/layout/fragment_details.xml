@@ -14,7 +14,7 @@
         android:layout_height="match_parent"
         android:id="@+id/constraintView">
 
-        <ImageView
+       <ImageView
             android:id="@+id/imageView"
             android:layout_width="100dp"
             android:layout_height="100dp"
@@ -48,49 +48,49 @@
             android:id="@+id/editTextName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:autofillHints=""
+            android:layout_marginTop="32dp"
             android:ems="10"
-            android:hint="@string/hint_name"
             android:inputType="textPersonName"
+            android:hint="@string/hint_name"
             android:text="@{String.valueOf(viewModel.selectedContactsTable.name)}"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.706"
+            app:layout_constraintHorizontal_bias="0.813"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.023" />
-
+            app:layout_constraintTop_toTopOf="parent" />
         <EditText
             android:id="@+id/editTextPhone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/normal_100"
+            android:layout_marginTop="16dp"
+            android:ems="10"
+            android:inputType="textPersonName"
             android:hint="@string/hint_phone"
             android:text="@{String.valueOf(viewModel.selectedContactsTable.phone)}"
+            app:layout_constraintBottom_toTopOf="@+id/linearLayout"
             app:layout_constraintEnd_toEndOf="@+id/editTextName"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/editTextName"
-            app:layout_constraintTop_toBottomOf="@+id/editTextName" />
+            app:layout_constraintTop_toBottomOf="@+id/editTextName"
+            app:layout_constraintVertical_bias="0.0" />
 
         <LinearLayout
+            android:id="@+id/linearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
-            android:layout_marginTop="5dp"
             android:gravity="center"
             android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editTextPhone"
-            app:layout_constraintVertical_bias="0.049">
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.398">
 
             <RadioGroup
                 android:id="@+id/radioButtonGroup"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-            </RadioGroup>
+                android:layout_height="wrap_content"></RadioGroup>
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/floatingActionButton"
@@ -107,6 +107,7 @@
                 app:tint="@null"
                 tools:layout_editor_absoluteX="280dp"
                 tools:layout_editor_absoluteY="534dp" />
+
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
