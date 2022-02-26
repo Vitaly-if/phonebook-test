@@ -1,28 +1,59 @@
 package com.example.phonebooktestapp.storage
 
-class StorageManager(private val ContactsDao: ContactsDao) {
+import android.content.Context
+import androidx.room.Room
 
-    suspend fun insert(contactsTable: ContactsTable) {
-        ContactsDao.insert(contactsTable)
+class StorageManager : IStorageManager {
+
+    private var dBHelper: ContactDatabase? = null
+    private lateinit var mContext: Context
+
+    constructor(context: Context) {
+        mContext = context
+
+        dBHelper =
+            Room.databaseBuilder(context, ContactDatabase::class.java, "contacts_history_database")
+                .allowMainThreadQueries()
+                .build()
     }
-    suspend fun update(contactsTable: ContactsTable) {
-        ContactsDao.update(contactsTable)
+
+    companion object {
+
+        @Volatile
+        private var INSTANCE: StorageManager? = null
+
+        fun getInstance(context: Context): StorageManager =
+            INSTANCE ?: synchronized(this) {
+                INSTANCE ?: buildStorage(context).also { INSTANCE = it }
+            }
+
+        private fun buildStorage(context: Context) =
+            StorageManager(context)
     }
-    suspend fun delete(contactsTable: ContactsTable) {
-        ContactsDao.delete(contactsTable)
+
+    override suspend fun insert(contactsTable: ContactsTable) {
+        dBHelper?.getContactsDao?.insert(contactsTable)
     }
-    suspend fun getContacts(): List<ContactsTable> {
-        return ContactsDao.getContacts()
+
+    override suspend fun update(contactsTable: ContactsTable) {
+        dBHelper?.getContactsDao?.update(contactsTable)
     }
-    suspend fun getToContact(): ContactsTable? {
-        return ContactsDao.getToContact()
+
+    override suspend fun delete(contactsTable: ContactsTable) {
+        dBHelper?.getContactsDao?.delete(contactsTable)
     }
-    suspend fun searchDataBase(searchQuery: String): List<ContactsTable> {
-        return ContactsDao.searchDataBase(searchQuery)
-    }
-    suspend fun searchDataBaseForCategory(searchQuery: String): List<ContactsTable> {
-        return ContactsDao.searchDataBaseForCategory(searchQuery)
-    }
+
+    override suspend fun getContacts(): List<ContactsTable>? =
+        dBHelper?.getContactsDao?.getContacts()
+
+    override suspend fun getToContact(): ContactsTable? =
+        dBHelper?.getContactsDao?.getToContact()
+
+    override suspend fun searchDataBase(searchQuery: String): List<ContactsTable>? =
+        dBHelper?.getContactsDao?.searchDataBase(searchQuery)
+
+    override suspend fun searchDataBaseForCategory(searchQuery: String): List<ContactsTable>? =
+        dBHelper?.getContactsDao?.searchDataBaseForCategory(searchQuery)
 
 
 }

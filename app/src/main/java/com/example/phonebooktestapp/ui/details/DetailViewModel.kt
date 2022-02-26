@@ -13,9 +13,7 @@ import kotlinx.coroutines.launch
 
 class DetailViewModel(contactsTable: ContactsTable?, app: Application) : AndroidViewModel(app) {
 
-    private val database = ContactDatabase.getInstance(app)
-
-    private val storageManager = StorageManager(database.contactsDao)
+    private val storageManager = StorageManager.getInstance(app)
 
     //live data для выбранного контакта
     private val _selectedContact = MutableLiveData<ContactsTable?>()

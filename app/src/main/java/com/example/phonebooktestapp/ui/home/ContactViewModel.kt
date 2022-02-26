@@ -5,15 +5,12 @@ import android.content.ContentValues
 import android.util.Log
 import androidx.lifecycle.*
 import com.example.phonebooktestapp.storage.ContactsTable
-import com.example.phonebooktestapp.storage.ContactDatabase.Companion.getInstance
 import com.example.phonebooktestapp.storage.StorageManager
 import kotlinx.coroutines.launch
 
 class ContactViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val database = getInstance(application)
-
-    private val storageManager = StorageManager(database.contactsDao)
+    private val storageManager = StorageManager.getInstance(application)
 
     //live data для загрузки с базы данных
     private val _listContact = MutableLiveData<List<ContactsTable>>()
