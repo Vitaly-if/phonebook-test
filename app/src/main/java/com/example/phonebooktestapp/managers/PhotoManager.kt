@@ -15,6 +15,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.core.content.FileProvider
 import androidx.fragment.app.FragmentActivity
+import com.example.phonebooktestapp.storage.StorageManager
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -31,6 +32,13 @@ import java.util.*
 class PhotoManager() {
 
     private lateinit var mContext: Context
+    lateinit var callBackUri: (Uri) -> Unit
+    private lateinit var currentPhotoPath: String
+    val CAMERA_REQUEST_CODE = 1
+    val GALLERY_REQUEST_CODE = 2
+    var photoURI: Uri? = null
+    private lateinit var mApplication: Application
+    private lateinit var mActivity: FragmentActivity
 
     constructor(context: Context) : this() {
 
@@ -43,14 +51,7 @@ class PhotoManager() {
         @Volatile
         private var INSTANCE: PhotoManager? = null
 
-        lateinit var callBackUri: (Uri) -> Unit
-        private lateinit var currentPhotoPath: String
-        val CAMERA_REQUEST_CODE = 1
-        val GALLERY_REQUEST_CODE = 2
-        var photoURI: Uri? = null
-        private lateinit var mApplication: Application
-        private lateinit var mActivity: FragmentActivity
-        private lateinit var mContext: Context
+
 
 
         fun getInstance(
@@ -64,18 +65,30 @@ class PhotoManager() {
                 }
 
             }
+        private fun buildStorage(context: Context) =
+            PhotoManager(context)
+    }
+
 
         fun getPhotoUri(
-            context: Context,
+            modePhotoManager: ModePhotoManager,
             application: Application,
             activity: FragmentActivity,
             clickListener: (Uri) -> Unit
         ) {
             mApplication = application
             mActivity = activity
-            mContext = context
             callBackUri = clickListener
-            showDialog()
+
+            when (modePhotoManager) {
+
+                ModePhotoManager.SHOW_DIALOG -> showDialog()
+
+                ModePhotoManager.GET_FROM_CAMERA -> cameraCheckPermission()
+
+                ModePhotoManager.GET_FROM_GALLERY -> galleryCheckPermission(mApplication.packageName)
+            }
+
         }
 
         fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -268,7 +281,7 @@ class PhotoManager() {
 
 
         }
-    }
+
 
 
 }

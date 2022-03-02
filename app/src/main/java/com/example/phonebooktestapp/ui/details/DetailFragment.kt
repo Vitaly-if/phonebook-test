@@ -20,6 +20,7 @@ import com.example.phonebooktestapp.R
 import com.example.phonebooktestapp.storage.ContactsTable
 import com.bumptech.glide.Glide
 import com.example.phonebooktestapp.databinding.FragmentDetailsBinding
+import com.example.phonebooktestapp.managers.ModePhotoManager
 import com.example.phonebooktestapp.managers.PhotoManager
 
 
@@ -100,11 +101,11 @@ class DetailFragment : Fragment() {
         //загрузка изображения
         binding.imageEdit.setOnClickListener {
 
-            PhotoManager.getInstance(context)
+            val photoManager = PhotoManager.getInstance(context)
 
             context?.let { context ->
                 activity?.let { activity ->
-                    PhotoManager.getPhotoUri(context, application, activity) {
+                    photoManager?.getPhotoUri(ModePhotoManager.SHOW_DIALOG, application, activity) {
 
                         viewModel.addImage(it)
                     }

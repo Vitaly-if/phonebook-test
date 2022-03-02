@@ -56,8 +56,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
       super.onActivityResult(requestCode, resultCode, data)
-        PhotoManager.getInstance(baseContext)
-        PhotoManager.onActivityResult(requestCode, resultCode, data)
+        PhotoManager.getInstance(baseContext)?.
+        onActivityResult(requestCode, resultCode, data)
         }
 
     override fun onSupportNavigateUp(): Boolean {
