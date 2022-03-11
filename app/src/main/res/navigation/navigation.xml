@@ -20,7 +20,7 @@
         <argument
             android:name="selectedContact"
             android:defaultValue="@null"
-            app:argType="com.example.phonebooktestapp.storage.ContactsTable"
+            app:argType="com.example.phonebooktestapp.models.ContactModel"
             app:nullable="true" />
         <action
             android:id="@+id/action_detailFragment_to_contactsFragment"

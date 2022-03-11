@@ -2,6 +2,7 @@ package com.example.phonebooktestapp.storage
 
 import android.content.Context
 import androidx.room.Room
+import com.example.phonebooktestapp.models.ContactModel
 
 class StorageManager : IStorageManager {
 
@@ -31,29 +32,41 @@ class StorageManager : IStorageManager {
             StorageManager(context)
     }
 
-    override suspend fun insert(contactsTable: ContactsTable) {
-        dBHelper?.getContactsDao?.insert(contactsTable)
+    override suspend fun insert(contact: ContactModel) {
+        dBHelper?.getContactsDao?.insert(ContactsTable(0,contact.contactAvatarImg,contact.name,contact.phone,contact.category))
     }
 
-    override suspend fun update(contactsTable: ContactsTable) {
-        dBHelper?.getContactsDao?.update(contactsTable)
+    override suspend fun update(contact: ContactModel) {
+        dBHelper?.getContactsDao?.update(ContactsTable(contact.contactId,contact.contactAvatarImg,contact.name,contact.phone,contact.category))
     }
 
-    override suspend fun delete(contactsTable: ContactsTable) {
-        dBHelper?.getContactsDao?.delete(contactsTable)
+    override suspend fun delete(contact: ContactModel) {
+        dBHelper?.getContactsDao?.delete(ContactsTable(contact.contactId,contact.contactAvatarImg,contact.name,contact.phone,contact.category))
     }
 
-    override suspend fun getContacts(): List<ContactsTable>? =
-        dBHelper?.getContactsDao?.getContacts()
+    override suspend fun getContacts(): List<ContactModel>? {
+        val result = dBHelper?.getContactsDao?.getContacts()
+        return result?.let { convertList(it) }
+    }
 
-    override suspend fun getToContact(): ContactsTable? =
-        dBHelper?.getContactsDao?.getToContact()
+    private fun convertList(result: List<ContactsTable>):List<ContactModel> {
+        val newResult = mutableListOf<ContactModel>()
+        if (result != null) {
+            for (it in result) {
+                newResult.add(ContactModel(it.contactId,it.contactAvatarImg,it.name,it.phone,it.category))
+            }
+        }
+        return newResult
+    }
 
-    override suspend fun searchDataBase(searchQuery: String): List<ContactsTable>? =
-        dBHelper?.getContactsDao?.searchDataBase(searchQuery)
+    // override suspend fun getToContact(): ContactModel? =
+   //    dBHelper?.getContactsDao?.getToContact()
 
-    override suspend fun searchDataBaseForCategory(searchQuery: String): List<ContactsTable>? =
-        dBHelper?.getContactsDao?.searchDataBaseForCategory(searchQuery)
+    override suspend fun searchDataBase(searchQuery: String): List<ContactModel>? =
+        dBHelper?.getContactsDao?.searchDataBase(searchQuery)?.let { convertList(it) }
+
+    override suspend fun searchDataBaseForCategory(searchQuery: String): List<ContactModel>? =
+        dBHelper?.getContactsDao?.searchDataBaseForCategory(searchQuery)?.let { convertList(it) }
 
 
 }

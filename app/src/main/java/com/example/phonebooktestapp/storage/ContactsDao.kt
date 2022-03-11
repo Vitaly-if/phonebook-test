@@ -17,8 +17,8 @@ interface ContactsDao {
     @Query("SELECT * FROM contact_table")
     suspend fun getContacts(): List<ContactsTable>
 
-    @Query("SELECT * FROM contact_table ORDER BY contactId DESC LIMIT 1")
-    suspend fun getToContact(): ContactsTable?
+    //@Query("SELECT * FROM contact_table ORDER BY contactId DESC LIMIT 1")
+    //suspend fun getToContact(): ContactsTable?
 
     @Query("SELECT * FROM contact_table WHERE name LIKE :searchQuery")
     suspend fun searchDataBase(searchQuery: String): List<ContactsTable>

@@ -6,18 +6,19 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.example.phonebooktestapp.models.ContactModel
 import com.example.phonebooktestapp.storage.ContactsTable
 import com.example.phonebooktestapp.storage.ContactDatabase
 import com.example.phonebooktestapp.storage.StorageManager
 import kotlinx.coroutines.launch
 
-class DetailViewModel(contactsTable: ContactsTable?, app: Application) : AndroidViewModel(app) {
+class DetailViewModel(contactsTable: ContactModel?, app: Application) : AndroidViewModel(app) {
 
     private val storageManager = StorageManager.getInstance(app)
 
     //live data для выбранного контакта
-    private val _selectedContact = MutableLiveData<ContactsTable?>()
-    val selectedContactsTable: MutableLiveData<ContactsTable?>
+    private val _selectedContact = MutableLiveData<ContactModel?>()
+    val selectedContactsTable: MutableLiveData<ContactModel?>
         get() = _selectedContact
 
     //live data для сохранения контакта
@@ -46,7 +47,7 @@ class DetailViewModel(contactsTable: ContactsTable?, app: Application) : Android
     init {
         //проверка, если приходит null создается пустой контакт
         if (contactsTable == null)
-            _selectedContact.value = ContactsTable(0L, "", "")
+            _selectedContact.value = ContactModel(0L,"","","","")
         else {
             _selectedContact.value = contactsTable
             _avatarImgString.value = contactsTable.contactAvatarImg
@@ -57,7 +58,7 @@ class DetailViewModel(contactsTable: ContactsTable?, app: Application) : Android
     }
 
     //выбор категории для RadioButton
-    private fun getGroupContact(_selectedContactsTable: MutableLiveData<ContactsTable?>): Int {
+    private fun getGroupContact(_selectedContactsTable: MutableLiveData<ContactModel?>): Int {
         var selectCategory = 0
         selectCategory = when (_selectedContactsTable.value?.category) {
 
@@ -70,8 +71,15 @@ class DetailViewModel(contactsTable: ContactsTable?, app: Application) : Android
         }
         return selectCategory
     }
+//    //добавление контакта в базу данных
+//    fun insertContact(contactsTable: ContactsTable) {
+//        viewModelScope.launch {
+//            storageManager.insert(contactsTable)
+//            _closeDetilFragment.value = true
+//        }
+//    }
     //добавление контакта в базу данных
-    fun insertContact(contactsTable: ContactsTable) {
+    fun insertContact(contactsTable: ContactModel) {
         viewModelScope.launch {
             storageManager.insert(contactsTable)
             _closeDetilFragment.value = true
@@ -79,7 +87,7 @@ class DetailViewModel(contactsTable: ContactsTable?, app: Application) : Android
     }
 
     //обновление контакта в базе данных
-    fun updateContact(contactsTable: ContactsTable) {
+    fun updateContact(contactsTable: ContactModel) {
         viewModelScope.launch {
             storageManager.update(contactsTable)
             _closeDetilFragment.value = true

@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.ContentValues
 import android.util.Log
 import androidx.lifecycle.*
+import com.example.phonebooktestapp.models.ContactModel
 import com.example.phonebooktestapp.storage.ContactsTable
 import com.example.phonebooktestapp.storage.StorageManager
 import kotlinx.coroutines.launch
@@ -13,16 +14,16 @@ class ContactViewModel(application: Application) : AndroidViewModel(application)
     private val storageManager = StorageManager.getInstance(application)
 
     //live data для загрузки с базы данных
-    private val _listContact = MutableLiveData<List<ContactsTable>>()
+    private val _listContact = MutableLiveData<List<ContactModel>>()
 
-    val listContactsTable: LiveData<List<ContactsTable>>
+    val listContactsTable: LiveData<List<ContactModel>>
         get() = _listContact
 
     //live data для передачи в detailfragment
-    private val _navigateToContact = MutableLiveData<ContactsTable?>()
+    private val _navigateToContact = MutableLiveData<ContactModel?>()
 
     //live data для статуса перехода в deteilfragment
-    val navigateToSelectedContactsTable: MutableLiveData<ContactsTable?>
+    val navigateToSelectedContactsTable: MutableLiveData<ContactModel?>
         get() = _navigateToContact
 
     //live data для открытия и заполнения drawermenu
@@ -90,7 +91,7 @@ class ContactViewModel(application: Application) : AndroidViewModel(application)
     }
 
     //функция получает в параметре выбранный контакт и изменяет LiveData, далее происходит переход по навигации
-    fun displayContactDetails(contactsTable: ContactsTable) {
+    fun displayContactDetails(contactsTable: ContactModel) {
         _navigateToContact.value = contactsTable
     }
 

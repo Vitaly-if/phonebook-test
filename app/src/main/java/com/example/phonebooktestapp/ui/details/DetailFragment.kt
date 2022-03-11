@@ -22,6 +22,7 @@ import com.bumptech.glide.Glide
 import com.example.phonebooktestapp.databinding.FragmentDetailsBinding
 import com.example.phonebooktestapp.managers.ModePhotoManager
 import com.example.phonebooktestapp.managers.PhotoManager
+import com.example.phonebooktestapp.models.ContactModel
 
 
 class DetailFragment : Fragment() {
@@ -135,10 +136,17 @@ class DetailFragment : Fragment() {
         viewModel.saveContact.observe(this, {
             if (it) {
 
-                var contactNew = ContactsTable()
+                var contactNew = ContactModel(0L,"","","","")
                 // если контакт не новый копируем выбранный контакт и если есть изменения записываем
-                if (!viewModel.newContact)
-                    contactNew = viewModel.selectedContactsTable.value!!.copy()
+                if (!viewModel.newContact) {
+                    val ContactOld = viewModel.selectedContactsTable.value!!
+                    contactNew.contactId = ContactOld.contactId
+                    contactNew.contactAvatarImg = ContactOld.contactAvatarImg
+                    contactNew.phone = ContactOld.phone
+                    contactNew.name= ContactOld.name
+                    contactNew.category= ContactOld.category
+
+                }
 
                 val checkedRadioButtonId = binding.radioButtonGroup.checkedRadioButtonId
                 val selectedRadioButton =

@@ -1,19 +1,21 @@
 package com.example.phonebooktestapp.storage
 
+import com.example.phonebooktestapp.models.ContactModel
+
 interface IStorageManager {
 
-    suspend fun insert(contactsTable: ContactsTable)
+    suspend fun insert(contactsTable: ContactModel)
 
-    suspend fun update(contactsTable: ContactsTable)
+    suspend fun update(contactsTable: ContactModel)
 
-    suspend fun delete(contactsTable: ContactsTable)
+    suspend fun delete(contactsTable: ContactModel)
 
-    suspend fun getContacts(): List<ContactsTable>?
+    suspend fun getContacts(): List<ContactModel>?
 
-    suspend fun getToContact(): ContactsTable?
+   // suspend fun getToContact(): ContactModel?
 
-    suspend fun searchDataBase(searchQuery: String): List<ContactsTable>?
+    suspend fun searchDataBase(searchQuery: String): List<ContactModel>?
 
-    suspend fun searchDataBaseForCategory(searchQuery: String): List<ContactsTable>?
+    suspend fun searchDataBaseForCategory(searchQuery: String): List<ContactModel>?
 
 }
