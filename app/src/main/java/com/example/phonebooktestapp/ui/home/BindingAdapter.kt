@@ -3,7 +3,6 @@ package com.example.phonebooktestapp.ui.home
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.phonebooktestapp.models.ContactModel
-import com.example.phonebooktestapp.storage.ContactsTable
 
 //адаптер связывающий viewModel.listContactsTable и RecyclerView фрагмента
 @BindingAdapter("listData")

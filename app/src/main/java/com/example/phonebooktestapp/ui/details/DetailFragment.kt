@@ -7,22 +7,23 @@ import android.content.ContentValues
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
+import android.text.TextUtils
 import android.util.Log
 import android.view.*
+import android.view.View.VISIBLE
 import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
 import android.widget.RadioButton
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import com.example.phonebooktestapp.R
-import com.example.phonebooktestapp.storage.ContactsTable
 import com.bumptech.glide.Glide
 import com.example.phonebooktestapp.databinding.FragmentDetailsBinding
 import com.example.phonebooktestapp.managers.ModePhotoManager
 import com.example.phonebooktestapp.managers.PhotoManager
 import com.example.phonebooktestapp.models.ContactModel
+import com.example.phonebooktestapp.models.ContactsGroupModel
 
 
 class DetailFragment : Fragment() {
@@ -33,6 +34,8 @@ class DetailFragment : Fragment() {
 
     private lateinit var binding: FragmentDetailsBinding
     private lateinit var application: Application
+    var listGroupNew = mutableListOf<ContactsGroupModel>()
+
 
     @SuppressLint("ResourceType")
     override fun onCreateView(
@@ -82,19 +85,52 @@ class DetailFragment : Fragment() {
         setHasOptionsMenu(true)
 
         loadRadioGroup()
+
+        addGroup()
+    }
+
+    private fun addGroup() {
+        binding.floatingAddGroup.setOnClickListener {
+            binding.editGroupLinear.visibility = VISIBLE
+        }
+
+        binding.buttonSaveGroup.setOnClickListener {
+            if (TextUtils.isEmpty(binding.editCategory.text)) {
+                binding.editGroupLinear.visibility = View.GONE
+            } else {
+                val category = binding.editCategory.text.toString()
+                val categoryNew = ContactsGroupModel(0, category)
+                viewModel.insertGroup(categoryNew)
+                binding.radioButtonGroup.removeAllViews()
+                binding.editCategory.text.clear()
+                binding.editGroupLinear.visibility = View.GONE
+            }
+        }
     }
 
     private fun loadRadioGroup() {
 
-        val dataCategory= resources.getStringArray(R.array.category)
-        val radioGroup = binding.radioButtonGroup
+//        val list = viewModel.listContactsGroup.value?.map{it.name}
+//        list?.forEachIndexed { index, element ->
+//            val newRadioButton = RadioButton(context)
+//            newRadioButton.text = element
+//            newRadioButton.setId(index)
+//            binding.radioButtonGroup.addView(newRadioButton)
+//        }
 
-        dataCategory.forEachIndexed { index, element ->
+        viewModel.listContactsGroup.observe(this) { group ->
+            // Update the cached copy of the words in the adapter.
+            group.let { listGroupNew = it as MutableList<ContactsGroupModel>
+                val list = listGroupNew.map{it.name}
+                Log.i(ContentValues.TAG, "Не работает Проверка")
+                list.forEachIndexed { index, element ->
+                    val newRadioButton = RadioButton(context)
+                    newRadioButton.text = element
+                    newRadioButton.setId(index)
+                    binding.radioButtonGroup.addView(newRadioButton)
+                }
 
-            val newRadioButton = RadioButton(context)
-            newRadioButton.text = element
-            newRadioButton.setId(index)
-            radioGroup.addView(newRadioButton)
+            }
         }
     }
 
@@ -128,15 +164,15 @@ class DetailFragment : Fragment() {
         })
         // первоначальное заполнение radioButton
 
-        val radioButton = binding.radioButtonGroup.getChildAt(viewModel.selectContactGroupRB)
-        binding.radioButtonGroup.check(radioButton.id)
+    //    val radioButton = binding.radioButtonGroup.getChildAt(viewModel.selectContactGroupRB)
+//        binding.radioButtonGroup.check(radioButton.id)
 
 
         // наблюдатель за нажатием кнопки save
         viewModel.saveContact.observe(this, {
             if (it) {
 
-                var contactNew = ContactModel(0L,"","","","")
+                var contactNew = ContactModel(0L,"","","",0L)
                 // если контакт не новый копируем выбранный контакт и если есть изменения записываем
                 if (!viewModel.newContact) {
                     val ContactOld = viewModel.selectedContactsTable.value!!
@@ -144,7 +180,7 @@ class DetailFragment : Fragment() {
                     contactNew.contactAvatarImg = ContactOld.contactAvatarImg
                     contactNew.phone = ContactOld.phone
                     contactNew.name= ContactOld.name
-                    contactNew.category= ContactOld.category
+                    contactNew.groupID= ContactOld.groupID
 
                 }
 
@@ -156,7 +192,8 @@ class DetailFragment : Fragment() {
                     contactNew.contactAvatarImg = viewModel?.avatarImgString?.value ?: ""
                     contactNew.name = editTextName.text.toString()
                     contactNew.phone = editTextPhone.text.toString()
-                    contactNew.category = selectedRadioButton?.text.toString()
+                    //исправить
+                    //contactNew.groupID = selectedRadioButton?.text.toString()
 
                 }
                 if (viewModel.newContact)

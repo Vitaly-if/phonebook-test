@@ -14,7 +14,39 @@
         android:layout_height="match_parent"
         android:id="@+id/constraintView">
 
-       <ImageView
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/floatingActionButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_margin="16dp"
+            android:clickable="true"
+            android:contentDescription="@string/contact_delete"
+            android:onClick="@{() -> viewModel.deleteContact()}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout"
+            app:srcCompat="@drawable/ic_baseline_delete_forever_24"
+            app:tint="@null" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/floatingDeleteGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_margin="16dp"
+            android:clickable="true"
+            android:contentDescription="@string/contact_delete"
+            android:onClick="@{() -> viewModel.deleteGroup()}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout"
+            app:layout_constraintVertical_bias="0.501"
+            app:srcCompat="@drawable/ic_baseline_delete_forever_24"
+            app:tint="@null" />
+
+        <ImageView
             android:id="@+id/imageView"
             android:layout_width="100dp"
             android:layout_height="100dp"
@@ -85,28 +117,62 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.398">
-
-            <RadioGroup
-                android:id="@+id/radioButtonGroup"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"></RadioGroup>
+            app:layout_constraintVertical_bias="0.236">
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/floatingActionButton"
+                android:id="@+id/floatingAddGroup"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
                 android:layout_margin="16dp"
                 android:layout_marginBottom="16dp"
                 android:clickable="true"
-                android:contentDescription="@string/contact_delete"
-                android:onClick="@{() -> viewModel.deleteContact()}"
+                android:contentDescription="@string/addContactGroup"
                 app:layout_constraintEnd_toEndOf="@+id/radioButtonGroup"
-                app:srcCompat="@drawable/ic_baseline_delete_forever_24"
+                app:srcCompat="@drawable/ic_baseline_group_add_24"
                 app:tint="@null"
                 tools:layout_editor_absoluteX="280dp"
                 tools:layout_editor_absoluteY="534dp" />
+
+            <RadioGroup
+                android:id="@+id/radioButtonGroup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"></RadioGroup>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/editGroupLinear"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout"
+            app:layout_constraintVertical_bias="0.045">
+
+            <EditText
+                android:id="@+id/edit_category"
+                android:layout_width="278dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:fontFamily="sans-serif-light"
+                android:hint="add Group"
+                android:inputType="textAutoComplete"
+                android:minHeight="16dp"
+                android:textSize="18sp" />
+
+            <Button
+                android:id="@+id/buttonSaveGroup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:layout_weight="1"
+                android:text="SAVE" />
 
         </LinearLayout>
 

@@ -15,6 +15,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.phonebooktestapp.R
 import com.example.phonebooktestapp.databinding.FragmentContactsListBinding
+import com.example.phonebooktestapp.models.ContactsGroupModel
 
 class ContactsFragment : Fragment() {
 
@@ -22,6 +23,8 @@ class ContactsFragment : Fragment() {
     private val viewModel: ContactViewModel by lazy {
         ViewModelProvider(this).get(ContactViewModel::class.java)
     }
+    var listGroupNew = mutableListOf<ContactsGroupModel>()
+    var idCategory = 0L
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -58,8 +61,8 @@ class ContactsFragment : Fragment() {
 
     private fun setupCategoryList() {
         //заполнение listview  бокового меню
-        val listCategory =
-            arrayOf("Все контакты", "Друзья", "Коллеги", "Знакомые", "Сокурсники", "О программе")
+        val listCategory = getListCategory()
+          //  arrayOf("Все контакты", "Друзья", "Коллеги", "Знакомые", "Сокурсники", "О программе")
 
         val adapter = activity?.let {
             ArrayAdapter<String>(
@@ -71,6 +74,20 @@ class ContactsFragment : Fragment() {
         var categoryListView = binding.categoryListView
         categoryListView.adapter = adapter
     }
+
+    private fun getListCategory(): List<String> {
+
+        var list = listOf<String>()
+
+            viewModel.listContactsGroup.observe(this) { group ->
+                // Update the cached copy of the words in the adapter.
+                group.let { listGroupNew = it as MutableList<ContactsGroupModel>
+                    list = listGroupNew.map{it.name}
+                }
+            }
+        return list
+        }
+
 
     private fun setupAddContactBottom() {
         //переход в пустой фрагмент создание нового контакта
@@ -87,6 +104,7 @@ class ContactsFragment : Fragment() {
             this,
             Observer {
                 if (it) {
+                    setupCategoryList()
                     val draverLayout = view?.findViewById<DrawerLayout>(R.id.drawer_layout)!!
                     draverLayout.openDrawer(GravityCompat.START)
                     val categoryListView = view?.findViewById<ListView>(R.id.category_list_view)!!
@@ -101,7 +119,9 @@ class ContactsFragment : Fragment() {
                             ) {
                                 val itemValue =
                                     categoryListView.getItemAtPosition(position) as String
-                                viewModel.filterContactlist(itemValue)
+                                idCategory =  position.toLong()
+                                Log.i(ContentValues.TAG,"проверка нажатия позиции $idCategory")
+                                viewModel.filterContactlist(idCategory)
                                 draverLayout.closeDrawer(GravityCompat.START)
                                 viewModel.openDrawerComplete()
                             }

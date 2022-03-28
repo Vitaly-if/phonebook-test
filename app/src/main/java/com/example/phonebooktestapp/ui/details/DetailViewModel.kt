@@ -7,9 +7,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.phonebooktestapp.models.ContactModel
-import com.example.phonebooktestapp.storage.ContactsTable
-import com.example.phonebooktestapp.storage.ContactDatabase
+import com.example.phonebooktestapp.models.ContactsGroupModel
 import com.example.phonebooktestapp.storage.StorageManager
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class DetailViewModel(contactsTable: ContactModel?, app: Application) : AndroidViewModel(app) {
@@ -36,6 +36,10 @@ class DetailViewModel(contactsTable: ContactModel?, app: Application) : AndroidV
     val avatarImgString: LiveData<String>
         get() = _avatarImgString
 
+    private var _listContactsGroup = MutableLiveData<List<ContactsGroupModel>>()
+    val listContactsGroup: LiveData<List<ContactsGroupModel>>
+        get() = _listContactsGroup
+
     //пеерменная для отслеживания новый контакт или нет(используется при сохранении изменений(false)
     //создание нового(true)
     var newContact = true
@@ -45,32 +49,36 @@ class DetailViewModel(contactsTable: ContactModel?, app: Application) : AndroidV
 
 
     init {
+        getContactsGroup()
+
         //проверка, если приходит null создается пустой контакт
         if (contactsTable == null)
-            _selectedContact.value = ContactModel(0L,"","","","")
+            _selectedContact.value = ContactModel(0L,"","","",0L)
         else {
             _selectedContact.value = contactsTable
             _avatarImgString.value = contactsTable.contactAvatarImg
             newContact = false
         }
-        selectContactGroupRB = getGroupContact(_selectedContact)
+        //исправить
+    //   selectContactGroupRB = getGroupContact(_selectedContact)
 
     }
 
     //выбор категории для RadioButton
-    private fun getGroupContact(_selectedContactsTable: MutableLiveData<ContactModel?>): Int {
-        var selectCategory = 0
-        selectCategory = when (_selectedContactsTable.value?.category) {
-
-            "Друзья" -> 1
-            "Коллеги" -> 2
-            "Знакомые" -> 3
-            "Сокурсники" -> 4
-            else -> 0
-
-        }
-        return selectCategory
-    }
+    //исправить
+//    private fun getGroupContact(_selectedContactsTable: MutableLiveData<ContactModel?>): Int {
+//        var selectCategory = 0
+//        selectCategory = when (_selectedContactsTable.value?.category) {
+//
+//            "Друзья" -> 1
+//            "Коллеги" -> 2
+//            "Знакомые" -> 3
+//            "Сокурсники" -> 4
+//            else -> 0
+//
+//        }
+//        return selectCategory
+//    }
 //    //добавление контакта в базу данных
 //    fun insertContact(contactsTable: ContactsTable) {
 //        viewModelScope.launch {
@@ -78,6 +86,12 @@ class DetailViewModel(contactsTable: ContactModel?, app: Application) : AndroidV
 //            _closeDetilFragment.value = true
 //        }
 //    }
+    fun getContactsGroup() {
+        viewModelScope.launch {
+           _listContactsGroup.value = storageManager.getAllGroups()
+        }
+    }
+
     //добавление контакта в базу данных
     fun insertContact(contactsTable: ContactModel) {
         viewModelScope.launch {
@@ -104,6 +118,14 @@ class DetailViewModel(contactsTable: ContactModel?, app: Application) : AndroidV
             }
         }
     }
+    fun deleteGroup() {
+        viewModelScope.launch {
+            storageManager.deleteAllGroup()
+            delay(200)
+            getContactsGroup()
+        }
+
+    }
     //сохранение контакта начало
     fun saveContactStart() {
         _saveContact.value = true
@@ -118,6 +140,14 @@ class DetailViewModel(contactsTable: ContactModel?, app: Application) : AndroidV
     //добавление аватара
     fun addImage(uri: Uri?) {
         _avatarImgString.value = uri?.toString()
+    }
+
+    fun insertGroup(categoryNew: ContactsGroupModel) {
+        viewModelScope.launch {
+            storageManager.addGroup(categoryNew)
+            getContactsGroup()
+        }
+
     }
 
 }

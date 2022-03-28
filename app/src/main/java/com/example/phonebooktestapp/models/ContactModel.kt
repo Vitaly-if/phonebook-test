@@ -24,7 +24,7 @@ class ContactModel : Parcelable {
             field = value
         }
 
-    var category: String = ""
+    var groupID: Long = 0L
         get() = field
         set(value) {
             field = value
@@ -35,16 +35,15 @@ class ContactModel : Parcelable {
         contactAvatarImg = parcel.readString().toString()
         name = parcel.readString().toString()
         phone = parcel.readString().toString()
-        category = parcel.readString().toString()
+        groupID = parcel.readLong()
     }
 
-
-    constructor(id: Long, address: String, name: String, phone: String, group: String) {
+    constructor(id: Long, address: String, name: String, phone: String, group: Long) {
         this.contactId = id;
         this.contactAvatarImg = address
         this.name = name
         this.phone = phone
-        this.category = group
+        this.groupID = group
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -52,7 +51,7 @@ class ContactModel : Parcelable {
         parcel.writeString(contactAvatarImg)
         parcel.writeString(name)
         parcel.writeString(phone)
-        parcel.writeString(category)
+        parcel.writeLong(groupID)
 
     }
 

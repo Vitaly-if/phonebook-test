@@ -4,7 +4,6 @@ import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.phonebooktestapp.models.ContactModel
-import com.example.phonebooktestapp.storage.ContactsTable
 
 class DetailViewModelFactory(
     private val contactsTable: ContactModel?,

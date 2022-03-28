@@ -5,7 +5,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.phonebooktestapp.storage.ContactsTable
 import com.example.phonebooktestapp.databinding.ContactListItemBinding
 import com.bumptech.glide.Glide
 import com.example.phonebooktestapp.models.ContactModel

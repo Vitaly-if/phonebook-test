@@ -1,4 +1,4 @@
-package com.example.phonebooktestapp.storage
+package com.example.phonebooktestapp.storage.table
 
 import android.os.Parcelable
 import androidx.room.ColumnInfo
@@ -21,7 +21,7 @@ data class ContactsTable(
     @ColumnInfo(name = "phone")
     var phone: String = "",
 
-    @ColumnInfo(name = "category")
-    var category: String = ""
+    @ColumnInfo(name = "group_id")
+    var groupID: Long = 0L
 
 ): Parcelable

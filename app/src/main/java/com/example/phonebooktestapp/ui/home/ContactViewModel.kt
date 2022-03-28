@@ -5,7 +5,7 @@ import android.content.ContentValues
 import android.util.Log
 import androidx.lifecycle.*
 import com.example.phonebooktestapp.models.ContactModel
-import com.example.phonebooktestapp.storage.ContactsTable
+import com.example.phonebooktestapp.models.ContactsGroupModel
 import com.example.phonebooktestapp.storage.StorageManager
 import kotlinx.coroutines.launch
 
@@ -31,9 +31,20 @@ class ContactViewModel(application: Application) : AndroidViewModel(application)
     val opendrawermenu: LiveData<Boolean>
         get() = _opendrawermenu
 
+    private var _listContactsGroup = MutableLiveData<List<ContactsGroupModel>>()
+    val listContactsGroup: LiveData<List<ContactsGroupModel>>
+        get() = _listContactsGroup
+
     init {
         loadAllContacts()
+        getContactsGroup()
         _opendrawermenu.value = false
+    }
+
+    private fun getContactsGroup() {
+        viewModelScope.launch {
+            _listContactsGroup.value = storageManager.getAllGroups()
+        }
     }
 
     //получение списка контактов из базы данных
@@ -48,9 +59,10 @@ class ContactViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
-    //обновление списка контактов
+    //обновление списка контактов и списка групп
     fun updateContactList() {
         loadAllContacts()
+        getContactsGroup()
     }
 
     //поиск контактов по имены
@@ -68,15 +80,23 @@ class ContactViewModel(application: Application) : AndroidViewModel(application)
     }
 
     //поиск контактов по категориии
-    fun filterContactlist(searchQuery: String) {
+    fun filterContactlist(searchQuery: Long) {
         val searchQueryFormat = "%$searchQuery%"
         when (searchQuery) {
-            "Все контакты" -> {
+            1L -> {
                 loadAllContacts()
             }
-            "О программе" -> {
+            0L -> {
+                viewModelScope.launch {
+                    try {
+                        _listContact.value =
+                            storageManager.searchDataBaseForCategory(searchQueryFormat)
+                    } catch (e: Exception) {
 
+                    }
+                }
             }
+
             else -> {
                 viewModelScope.launch {
                     try {
