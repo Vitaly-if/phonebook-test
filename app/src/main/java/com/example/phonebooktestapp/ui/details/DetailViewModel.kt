@@ -1,7 +1,9 @@
 package com.example.phonebooktestapp.ui.details
 
 import android.app.Application
+import android.content.ContentValues
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -53,42 +55,25 @@ class DetailViewModel(contactsTable: ContactModel?, app: Application) : AndroidV
 
         //проверка, если приходит null создается пустой контакт
         if (contactsTable == null)
-            _selectedContact.value = ContactModel(0L,"","","",0L)
+            _selectedContact.value = ContactModel(0L, "", "", "", 0L)
         else {
             _selectedContact.value = contactsTable
             _avatarImgString.value = contactsTable.contactAvatarImg
             newContact = false
         }
         //исправить
-    //   selectContactGroupRB = getGroupContact(_selectedContact)
+        selectContactGroupRB = getGroupContact(_selectedContact)!!
 
     }
 
-    //выбор категории для RadioButton
-    //исправить
-//    private fun getGroupContact(_selectedContactsTable: MutableLiveData<ContactModel?>): Int {
-//        var selectCategory = 0
-//        selectCategory = when (_selectedContactsTable.value?.category) {
-//
-//            "Друзья" -> 1
-//            "Коллеги" -> 2
-//            "Знакомые" -> 3
-//            "Сокурсники" -> 4
-//            else -> 0
-//
-//        }
-//        return selectCategory
-//    }
-//    //добавление контакта в базу данных
-//    fun insertContact(contactsTable: ContactsTable) {
-//        viewModelScope.launch {
-//            storageManager.insert(contactsTable)
-//            _closeDetilFragment.value = true
-//        }
-//    }
+    private fun getGroupContact(_selectedContactsTable: MutableLiveData<ContactModel?>): Int? {
+
+        return _selectedContactsTable.value?.groupID?.toInt()
+    }
+
     fun getContactsGroup() {
         viewModelScope.launch {
-           _listContactsGroup.value = storageManager.getAllGroups()
+            _listContactsGroup.value = storageManager.getAllGroups()
         }
     }
 
@@ -97,6 +82,7 @@ class DetailViewModel(contactsTable: ContactModel?, app: Application) : AndroidV
         viewModelScope.launch {
             storageManager.insert(contactsTable)
             _closeDetilFragment.value = true
+            Log.i(ContentValues.TAG, "проверка ID3 ${contactsTable.groupID}")
         }
     }
 
@@ -105,8 +91,10 @@ class DetailViewModel(contactsTable: ContactModel?, app: Application) : AndroidV
         viewModelScope.launch {
             storageManager.update(contactsTable)
             _closeDetilFragment.value = true
+            Log.i(ContentValues.TAG, "проверка ID2 ${contactsTable.groupID}")
         }
     }
+
     //удаление контакта
     fun deleteContact() {
         if (!newContact) {
@@ -118,18 +106,22 @@ class DetailViewModel(contactsTable: ContactModel?, app: Application) : AndroidV
             }
         }
     }
+
     fun deleteGroup() {
         viewModelScope.launch {
             storageManager.deleteAllGroup()
-            delay(200)
-            getContactsGroup()
+            delay(2000)
+            val categoryNew = ContactsGroupModel(0L, "Все контакты")
+            insertGroup(categoryNew)
         }
 
     }
+
     //сохранение контакта начало
     fun saveContactStart() {
         _saveContact.value = true
     }
+
     //сохранение контакта завершение
     fun saveContactComplete() {
         _saveContact.value = false

@@ -83,18 +83,8 @@ class ContactViewModel(application: Application) : AndroidViewModel(application)
     fun filterContactlist(searchQuery: Long) {
         val searchQueryFormat = "%$searchQuery%"
         when (searchQuery) {
-            1L -> {
-                loadAllContacts()
-            }
             0L -> {
-                viewModelScope.launch {
-                    try {
-                        _listContact.value =
-                            storageManager.searchDataBaseForCategory(searchQueryFormat)
-                    } catch (e: Exception) {
-
-                    }
-                }
+                loadAllContacts()
             }
 
             else -> {

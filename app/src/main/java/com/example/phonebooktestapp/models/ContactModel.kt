@@ -4,31 +4,15 @@ import android.os.Parcel
 import android.os.Parcelable
 
 class ContactModel : Parcelable {
-    var contactId: Long = 0;
+    var contactId: Long = 0
 
     var contactAvatarImg: String = ""
-        get() = field
-        set(value) {
-            field = value
-        }
 
     var name: String = ""
-        get() = field
-        set(value) {
-            field = value
-        }
 
     var phone: String = ""
-        get() = field
-        set(value) {
-            field = value
-        }
 
     var groupID: Long = 0L
-        get() = field
-        set(value) {
-            field = value
-        }
 
     constructor(parcel: Parcel) {
         contactId = parcel.readLong()
@@ -39,7 +23,7 @@ class ContactModel : Parcelable {
     }
 
     constructor(id: Long, address: String, name: String, phone: String, group: Long) {
-        this.contactId = id;
+        this.contactId = id
         this.contactAvatarImg = address
         this.name = name
         this.phone = phone

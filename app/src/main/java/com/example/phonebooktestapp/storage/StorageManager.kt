@@ -39,15 +39,15 @@ class StorageManager : IStorageManager {
     }
 
     override suspend fun insert(contact: ContactModel) {
-        dBHelper?.getContactsDao?.insert(ContactsTable(0,contact.contactAvatarImg,contact.name,contact.phone,0L))
+        dBHelper?.getContactsDao?.insert(ContactsTable(0,contact.contactAvatarImg,contact.name,contact.phone,contact.groupID))
     }
 
     override suspend fun update(contact: ContactModel) {
-        dBHelper?.getContactsDao?.update(ContactsTable(contact.contactId,contact.contactAvatarImg,contact.name,contact.phone,0L))
+        dBHelper?.getContactsDao?.update(ContactsTable(contact.contactId,contact.contactAvatarImg,contact.name,contact.phone,contact.groupID))
     }
 
     override suspend fun delete(contact: ContactModel) {
-        dBHelper?.getContactsDao?.delete(ContactsTable(contact.contactId,contact.contactAvatarImg,contact.name,contact.phone,0L))
+        dBHelper?.getContactsDao?.delete(ContactsTable(contact.contactId,contact.contactAvatarImg,contact.name,contact.phone,contact.groupID))
     }
     override suspend fun deleteAllGroup() {
         dBHelper?.getContactsDao?.deleteAllGroup()

@@ -24,6 +24,7 @@ import com.example.phonebooktestapp.managers.ModePhotoManager
 import com.example.phonebooktestapp.managers.PhotoManager
 import com.example.phonebooktestapp.models.ContactModel
 import com.example.phonebooktestapp.models.ContactsGroupModel
+import kotlinx.coroutines.delay
 
 
 class DetailFragment : Fragment() {
@@ -48,17 +49,19 @@ class DetailFragment : Fragment() {
         setupUI()
         bindVM()
 
-        binding.constraintView.setOnClickListener{
+        binding.constraintView.setOnClickListener {
             hideKeyboardFrom(context, view)
-            Log.i(ContentValues.TAG,"проверка нажатия")
+            Log.i(ContentValues.TAG, "проверка нажатия")
         }
         return binding.root
     }
+
     private fun hideKeyboardFrom(context: Context?, view: View?) {
         val imm =
             context?.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view?.windowToken, 0)
     }
+
     private fun setupBind(inflater: LayoutInflater, container: ViewGroup?) {
 
         binding = DataBindingUtil.inflate(
@@ -101,7 +104,6 @@ class DetailFragment : Fragment() {
                 val category = binding.editCategory.text.toString()
                 val categoryNew = ContactsGroupModel(0, category)
                 viewModel.insertGroup(categoryNew)
-                binding.radioButtonGroup.removeAllViews()
                 binding.editCategory.text.clear()
                 binding.editGroupLinear.visibility = View.GONE
             }
@@ -110,27 +112,29 @@ class DetailFragment : Fragment() {
 
     private fun loadRadioGroup() {
 
-//        val list = viewModel.listContactsGroup.value?.map{it.name}
-//        list?.forEachIndexed { index, element ->
-//            val newRadioButton = RadioButton(context)
-//            newRadioButton.text = element
-//            newRadioButton.setId(index)
-//            binding.radioButtonGroup.addView(newRadioButton)
-//        }
-
         viewModel.listContactsGroup.observe(this) { group ->
-            // Update the cached copy of the words in the adapter.
-            group.let { listGroupNew = it as MutableList<ContactsGroupModel>
-                val list = listGroupNew.map{it.name}
-                Log.i(ContentValues.TAG, "Не работает Проверка")
+
+            group.let { groupList ->
+                listGroupNew = groupList as MutableList<ContactsGroupModel>
+                val list = listGroupNew.map { it.name }
+                binding.radioButtonGroup.removeAllViews()
                 list.forEachIndexed { index, element ->
                     val newRadioButton = RadioButton(context)
                     newRadioButton.text = element
-                    newRadioButton.setId(index)
+                    newRadioButton.id = index
                     binding.radioButtonGroup.addView(newRadioButton)
                 }
 
+                checkRadioButton()
             }
+        }
+    }
+
+    private fun checkRadioButton() {
+        if (viewModel.selectContactGroupRB <= listGroupNew.size - 1) {
+            val radioButton = binding.radioButtonGroup.getChildAt(viewModel.selectContactGroupRB)
+            binding.radioButtonGroup.check(radioButton.id)
+            Log.i(ContentValues.TAG, "Проверка установки указателя")
         }
     }
 
@@ -162,38 +166,32 @@ class DetailFragment : Fragment() {
                 .circleCrop()
                 .into(binding.imageView)
         })
-        // первоначальное заполнение radioButton
-
-    //    val radioButton = binding.radioButtonGroup.getChildAt(viewModel.selectContactGroupRB)
-//        binding.radioButtonGroup.check(radioButton.id)
-
 
         // наблюдатель за нажатием кнопки save
         viewModel.saveContact.observe(this, {
             if (it) {
+                val checkedRadioButtonId = binding.radioButtonGroup.checkedRadioButtonId
+                val selectedRadioButton =
+                    view?.findViewById<RadioButton>(checkedRadioButtonId)
 
-                var contactNew = ContactModel(0L,"","","",0L)
+                var contactNew = ContactModel(0L, "", "", "", 0L)
                 // если контакт не новый копируем выбранный контакт и если есть изменения записываем
                 if (!viewModel.newContact) {
                     val ContactOld = viewModel.selectedContactsTable.value!!
                     contactNew.contactId = ContactOld.contactId
                     contactNew.contactAvatarImg = ContactOld.contactAvatarImg
                     contactNew.phone = ContactOld.phone
-                    contactNew.name= ContactOld.name
-                    contactNew.groupID= ContactOld.groupID
+                    contactNew.name = ContactOld.name
+                    contactNew.groupID = ContactOld.groupID
 
                 }
-
-                val checkedRadioButtonId = binding.radioButtonGroup.checkedRadioButtonId
-                val selectedRadioButton =
-                    view?.findViewById<RadioButton>(checkedRadioButtonId)
 
                 binding.apply {
                     contactNew.contactAvatarImg = viewModel?.avatarImgString?.value ?: ""
                     contactNew.name = editTextName.text.toString()
                     contactNew.phone = editTextPhone.text.toString()
-                    //исправить
-                    //contactNew.groupID = selectedRadioButton?.text.toString()
+                    contactNew.groupID = selectedRadioButton?.id?.toLong()!!
+                    Log.i(ContentValues.TAG, "проверка ID ${contactNew.groupID}")
 
                 }
                 if (viewModel.newContact)

@@ -3,7 +3,7 @@ package com.example.phonebooktestapp.models
 import android.os.Parcel
 import android.os.Parcelable
 
-data class ContactsGroupModel(var id: Long = 0, var name: String = "")  : Parcelable {
+data class ContactsGroupModel(var id: Long = 0, var name: String = "") : Parcelable {
 
     constructor(parcel: Parcel) : this() {
         id = parcel.readLong()

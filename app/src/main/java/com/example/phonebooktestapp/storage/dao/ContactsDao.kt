@@ -21,9 +21,6 @@ interface ContactsDao {
     @Query("SELECT * FROM contact_table")
     suspend fun getContacts(): List<ContactsTable>
 
-    //@Query("SELECT * FROM contact_table ORDER BY contactId DESC LIMIT 1")
-    //suspend fun getToContact(): ContactsTable?
-
     @Query("SELECT * FROM contact_table WHERE name LIKE :searchQuery")
     suspend fun searchDataBase(searchQuery: String): List<ContactsTable>
 
@@ -33,7 +30,7 @@ interface ContactsDao {
     @Insert(onConflict = OnConflictStrategy.FAIL)
     suspend fun addGroup(group: GroupsTable)
 
-    @Query("SELECT * FROM group_table ORDER BY group_name ASC")
+    @Query("SELECT * FROM group_table")
     suspend fun getAllGroups(): List<GroupsTable>
 
     @Query("DELETE FROM group_table")
